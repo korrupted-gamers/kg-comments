@@ -24,24 +24,34 @@ Isso is a commenting server similar to Disqus. More info on the [official websit
 #### Ports
 - **8080** [(reverse proxy!)](https://github.com/hardware/mailserver/wiki/Reverse-proxy-configuration).
 
-#### Example of simple configuration
+#### KG Clan deployment
 Here is the full documentation : https://posativ.org/isso/docs/
 
+Used with dokku. First on the dokku host, add an isso app
+
+    dokku apps:create isso
+
+Create a config file on the dokku host. I put mine in /root/isso-cfg/isso.conf
+
 ```
-# /mnt/docker/isso/config/isso.conf
 [general]
 dbpath = /db/comments.db
-host = https://cats.schrodinger.io/
+host =
+  http://kgclan.club
+  http://www.kgclan.club
+  http://korruptedgamers.com
+  http://www.korruptedgamers.com
+
 [server]
 listen = http://0.0.0.0:8080/
-
-# docker-compose.yml
-isso:
-  image: wonderfall/isso
-  environment:
-    - GID=1000
-    - UID=1000
-  volumes:
-    - /mnt/docker/isso/config:/config
-    - /mnt/docker/isso/db:/db
 ```
+
+
+Create a Dokku storage volume for the config file and the database sqlite file
+
+    dokku storage:mount isso /root/isso-cfg:/config
+    dokku storage:mount isso /root/isso-db:/db
+
+Push this repo to Dokku
+
+    git push dokku master
